@@ -11,6 +11,8 @@ from sklearn import svm
 import numpy 
 
 dataset = read_csv("bank.csv", header=None)
+dataset.drop(dataset.index[[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16]], inplace=True)
+
 
 
 # Numerical catergorisation of jobs within dataset 
@@ -32,9 +34,9 @@ dataset[[1]] = dataset[[1]].replace("services", 11)
 
 #Numerical categorisation of maritial status 
 # 0 is single, 1 is married, 2 is divorced or widowed
-dataset[[2]] = dataset[[2]].replace("single",0)
-dataset[[2]] = dataset[[2]].replace("married",1)
-dataset[[2]] = dataset[[2]].replace("divorced",2)
+dataset[[2]] = dataset[[2]].replace("single",1)
+dataset[[2]] = dataset[[2]].replace("married",2)
+dataset[[2]] = dataset[[2]].replace("divorced",3)
 
 '''
 Numerical categorisation of education levels 
@@ -58,6 +60,9 @@ yes is 1 and no is 0
 '''
 dataset[[6]] = dataset[[6]].replace("yes", 1)
 dataset[[6]] = dataset[[6]].replace("no", 0)
+
+dataset[[7]] = dataset[[7]].replace("yes", 1)
+dataset[[7]] = dataset[[7]].replace("no", 0)
 
 '''
 Numerical categorisation of contact methods for a customer
@@ -101,14 +106,34 @@ Numerical categorisation of binary options for whether the customer subscribed o
 dataset[[16]] = dataset[[16]].replace("no", 0)
 dataset[[16]] = dataset[[16]].replace("yes", 1)
 
-
-
-
-
-
-
-
-
-
+dataset[[0,1,3,8,15]]= dataset[[0,1,3,8,15]].replace(0, numpy.NaN)
+dataset[[13]]= dataset[[13]].replace(-1, numpy.NaN)
+dataset.dropna(inplace=True)
 
 print(dataset[[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16]])
+
+
+refined_dataset[[0,1,2,3,4,5,6,7]] = dataset[[0,5,9,10,11,12,13,14]]
+numcol = 8
+j=0
+while j < 8:
+    i=0
+    while i < numcol: 
+        print("cols:" + str(j) +" and "+ str(i))
+        if j!=i:
+            xpoints= refined_dataset[i]
+            ypoints = refined_dataset[j]
+
+            plt.scatter(xpoints, ypoints)
+            plt.show()
+        i=i+1
+        
+        
+    j=j+1
+
+'''
+XPoints= numpy.array(xpoints, ypoints)
+XPoints= XPoints.T
+YPoints = dataset[[16]]
+'''
+
