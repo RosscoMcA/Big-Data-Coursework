@@ -29,28 +29,44 @@ def hist_items(data):
 
 
 
-def bar_items():
-    train_data["job"].value_counts().plot(kind="bar")
+def visualise_items():
+    '''
+    The system can only process one chart at a time, thus each of these operations
+    were conducted one at a time
     
     
-bar_items()    
-def scatter_items(data):
-    numcol = 8
-    j=0
-    while j < 8:
-        i=0
-        while i < numcol: 
-            print("cols:" + str(j) +" and "+ str(i))
-            if j!=i:
-                xpoints= data[i]
-                ypoints = data[j]
+      train_data["age"].plot.hist()
+      train_data["job"].value_counts().plot(kind="bar")
+      train_data["marital"].value_counts().plot(kind="bar")
+      train_data["education"].value_counts().plot(kind="bar")
+      train_data["default"].value_counts().plot(kind="bar")
+      train_data["balance"].diff().hist(stacked= True, bins=50)
+      train_data["housing"].value_counts().plot(kind="bar")
+      train_data["loan"].value_counts().plot(kind="bar")
+      train_data["contact"].value_counts().plot(kind="bar")
+      train_data["day"].value_counts().plot(kind="bar")
+      train_data["month"].value_counts().plot(kind="bar")
+       train_data["duration"].plot.hist(bins= 100)
+      train_data["campaign"].value_counts().plot(kind="bar")
+      train_data["pdays"].plot.hist()
+      train_data["previous"].value_counts().plot(kind="bar")
+      train_data["poutcome"].value_counts().plot(kind="bar")
+      train_data["subscribed"].value_counts().plot(kind="bar")
+    '''
+
     
-                plt.scatter(xpoints, ypoints)
-                plt.show()
-            i=i+1
+    
+ 
+def scatter_items(xData, yData):
+    
+  xpoints= xData
+  ypoints = yData
+  plt.scatter(xpoints, ypoints)
+  plt.show()
+          
+scatter_items(train_data[[11], train_data[[0]])            
             
-            
-        j=j+1
+       
 
 '''
 XPoints= numpy.array(xpoints, ypoints)
