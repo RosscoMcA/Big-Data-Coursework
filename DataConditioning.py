@@ -7,35 +7,57 @@ Created on Tue Nov 28 12:02:06 2017
 from pandas import read_csv
 import matplotlib.pyplot as plt
 from sklearn import svm 
-import numpy 
+import numpy as np
 
  
     
     
-dataset = read_csv("bank.csv", header = None)
+
+#dataset= dataset.drop(dataset.columns[[8,15]], axis=1, inplace=False)
 
 
 
 
 
-print(dataset.describe())
+
+
+def outlier_ident(x):
+    q1 = np.percentile(x, 25)
+    q3 = np.percentile(x, 75)
+    inter_quart_r = q3-q1
+    flr = q1-1.5*inter_quart_r
+    cel = q3 + 1.5*inter_quart_r
+    outlier_indices = list(x.index[(x<flr) | (x>cel)])
+    outlier_val = list(x[outlier_indices])
+    
+    return outlier_indices, outlier_val
+    
 
 
 
 def getTrainingData():
-    #changeData()
-    print(dataset.describe())
-    return dataset[:7412]
+   dataset = read_csv("bank.csv")
+   dataset = dataset.drop(["contact", "poutcome", "month"], axis=1)
+    
+   dataset = changeData(dataset)
+    
+    
+       
+   return dataset
+    
 
-def changeData(): 
+
+
+
+
+def changeData(dataset): 
     
     #mark zero values as missing or NaN 
-    dataset = dataset.replace(0, numpy.nan)
-    dataset = dataset.replace(" ", numpy.nan)
-    dataset.dropna(inplace=True)
-    #count the number of Nan values in each column 
-    print(dataset.isnull().sum())
     
+    
+    
+    #count the number of Nan values in each column 
+   
     
     
     
@@ -43,79 +65,67 @@ def changeData():
      # 0 is unknown, 1 is admin., 2 is unemployed, 3 is management, 4 is housemaid
      # 5 is entrepreneur, 6 is student, 7 is blue-collar, 8 is self-employed
      # 9 is retired, 10 is technician, 11 is services
-    dataset[[1]] = dataset[[1]].replace("unknown", 0)
-    dataset[[1]] = dataset[[1]].replace("admin.", 1)
-    dataset[[1]] = dataset[[1]].replace("unemployed", 2)
-    dataset[[1]] = dataset[[1]].replace("management", 3)
-    dataset[[1]] = dataset[[1]].replace("housemaid", 4)
-    dataset[[1]] = dataset[[1]].replace("entrepreneur", 5)
-    dataset[[1]] = dataset[[1]].replace("student", 6)
-    dataset[[1]] = dataset[[1]].replace("blue-collar", 7)
-    dataset[[1]] = dataset[[1]].replace("self-employed", 8)
-    dataset[[1]] = dataset[[1]].replace("retired", 9)
-    dataset[[1]] = dataset[[1]].replace("technician", 10)
-    dataset[[1]] = dataset[[1]].replace("services", 11)
+    dataset["job"]= dataset["job"].replace("unknown", 0)
+    dataset["job"]= dataset["job"].replace("admin.", 1)
+    dataset["job"]= dataset["job"].replace("unemployed", 2)
+    dataset["job"]=dataset["job"].replace("management", 3)
+    dataset["job"]=dataset["job"].replace("housemaid", 4)
+    dataset["job"]=dataset["job"].replace("entrepreneur", 5)
+    dataset["job"]=dataset["job"].replace("student", 6)
+    dataset["job"]=dataset["job"].replace("blue-collar", 7)
+    dataset["job"]=dataset["job"].replace("self-employed", 8)
+    dataset["job"]=dataset["job"].replace("retired", 9)
+    dataset["job"]=dataset["job"].replace("technician", 10)
+    dataset["job"]=dataset["job"].replace("services", 11)
      
      #Numerical categorisation of maritial status 
      # 0 is single, 1 is married, 2 is divorced or widowed
-    dataset[[2]] = dataset[[2]].replace("single",1)
-    dataset[[2]] = dataset[[2]].replace("married",2)
-    dataset[[2]] = dataset[[2]].replace("divorced",3)
+    dataset["marital"]= dataset["marital"].replace("single",1)
+    dataset["marital"]= dataset["marital"].replace("married",2)
+    dataset["marital"]= dataset["marital"].replace("divorced",3)
      
     '''
      Numerical categorisation of education levels 
      0 is unknown, 1 is secondary, 2 is primary, and 3 is teriary
      '''
-    dataset[[3]] = dataset[[3]].replace("unknown", 0)
-    dataset[[3]] = dataset[[3]].replace("secondary", 1)
-    dataset[[3]] = dataset[[3]].replace("primary", 2)
-    dataset[[3]] = dataset[[3]].replace("tertiary", 3)
+    dataset["education"]=dataset["education"].replace("unknown", 0)
+    dataset["education"]=dataset["education"].replace("secondary", 1)
+    dataset["education"]=dataset["education"].replace("primary", 2)
+    dataset["education"]=dataset["education"].replace("tertiary", 3)
      
     '''
      Numerical categorisation of binary results in regards to having credit in default 
      (yes is 1, no is 0)
      '''
-    dataset[[4]] = dataset[[4]].replace("yes", 1)
-    dataset[[4]] = dataset[[4]].replace("no", 0)
+    dataset["default"]=dataset["default"].replace("yes", 1)
+    dataset["default"]=dataset["default"].replace("no", 0)
      
     '''
      Numerical categorisation of binary results in regards to having a personal loan
      yes is 1 and no is 0
      '''
-    dataset[[6]] = dataset[[6]].replace("yes", 1)
-    dataset[[6]] = dataset[[6]].replace("no", 0)
+    dataset["housing"]= dataset["housing"].replace("yes", 1)
+    dataset["housing"]=dataset["housing"].replace("no", 0)
      
-    dataset[[7]] = dataset[[7]].replace("yes", 1)
-    dataset[[7]] = dataset[[7]].replace("no", 0)
+    dataset["loan"]=dataset["loan"].replace("yes", 1)
+    dataset["loan"]=dataset["loan"].replace("no", 0)
      
-    '''
-     Numerical categorisation of the month of last contact
-     numbers correspond with the order of the months occurence
-     '''
-    dataset[[10]] = dataset[[10]].replace("jan", 1)
-    dataset[[10]] = dataset[[10]].replace("feb", 2)
-    dataset[[10]] = dataset[[10]].replace("mar", 3)
-    dataset[[10]] = dataset[[10]].replace("apr", 4)
-    dataset[[10]] = dataset[[10]].replace("may", 5)
-    dataset[[10]] = dataset[[10]].replace("jun", 6)
-    dataset[[10]] = dataset[[10]].replace("jul", 7)
-    dataset[[10]] = dataset[[10]].replace("aug", 8)
-    dataset[[10]] = dataset[[10]].replace("sep", 9)
-    dataset[[10]] = dataset[[10]].replace("oct", 10)
-    dataset[[10]] = dataset[[10]].replace("nov", 11)
-    dataset[[10]] = dataset[[10]].replace("dec", 12)
+    
      
     
     '''
      Numerical categorisation of binary options for whether the customer subscribed or not
      1 is yes, 0 is No
      '''
-    dataset[[16]] = dataset[[16]].replace("no", 0)
-    dataset[[16]] = dataset[[16]].replace("yes", 1)
+    dataset["subscribed"]=dataset["subscribed"].replace("no", 0)
+    dataset["subscribed"]=dataset["subscribed"].replace("yes", 1)
      
-    dataset[[0,1,3,8,15]]= dataset[[0,1,3,8,15]].replace(0, numpy.NaN)
-    dataset[[13]]= dataset[[13]].replace(-1, numpy.NaN)
+    dataset["age"]= dataset["age"].replace("0", np.NaN)
+    dataset["job"]= dataset["job"].replace("0", np.NaN)
+    dataset["education"]= dataset["education"].replace("0", np.NaN)
+    dataset["pdays"]=dataset["pdays"].replace("-1", np.NaN)
+    dataset = dataset.replace(" ", np.nan)
     dataset.dropna(inplace=True)
-    print(dataset.isnull().sum())
+    return dataset
 
 

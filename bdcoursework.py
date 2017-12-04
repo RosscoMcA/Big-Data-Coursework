@@ -4,30 +4,30 @@ Created on Tue Nov 21 12:26:03 2017
 
 @author: Ross
 """
-
+import pandas
 from pandas import read_csv
 import matplotlib.pyplot as plt
 from sklearn import svm 
 import numpy as np
 import scipy as sp
 import DataConditioning
+from sklearn.decomposition import PCA
 
 
 train_data = DataConditioning.getTrainingData()
 
 
+'''
+Normalises data within the columns 
+'''
+def dimensionality_reduction():
 
+    pca = PCA(n_components=14)
+    X_PCA = pandas.DataFrame(pca.fit_transform(train_data))
+    
+    print(X_PCA.head(5))
 
-def hist_items(data):
-   fig, ax = plt.subplots()
-   n, bins = np.histogram(data, 50)
-   
-   left = np.array(bins[:-1])
-   right = np.array(bins[1:])
-   bottom = np.zeros(len(left))
-   top= bottom +n
-
-
+dimensionality_reduction()
 
 def visualise_items():
     '''
@@ -56,29 +56,41 @@ def visualise_items():
 
     
     
- 
-def scatter_items(xData, yData):
+    '''
+def scatter_items():
+            
+   
+   numcol = 15
+   j=0
+   while j < 15:
+     i=0
+     while i < numcol: 
+         print("cols:" + str(j) +" and "+ str(i))
+         if j!=i and (i!=14 or j!=14):
     
-  xpoints= xData
-  ypoints = yData
-  plt.scatter(xpoints, ypoints)
-  plt.show()
-          
-scatter_items(train_data[[11], train_data[[0]])            
+             xpoints= train_data[[i]]
+             ypoints = train_data[[j]]
+             
+             cPoints = train_data[[14]]
+    
+             plt.scatter(xpoints, ypoints, c=cPoints)
+             plt.show()
+         i=i+1
+     j=j+1        
             
        
+scatter_items()
 
-'''
 XPoints= numpy.array(xpoints, ypoints)
 XPoints= XPoints.T
 YPoints = dataset[[16]]
-'''
+
 
 def mean(data): 
     return np.mean(data)
 
 def standardDev(data): 
     return sp.std(data)
- 
+'''
         
     
