@@ -9,17 +9,6 @@ import matplotlib.pyplot as plt
 from sklearn import svm 
 import numpy as np
 
- 
-    
-    
-
-#dataset= dataset.drop(dataset.columns[[8,15]], axis=1, inplace=False)
-
-
-
-
-
-
 
 def outlier_ident(x):
     q1 = np.percentile(x, 25)
@@ -28,19 +17,34 @@ def outlier_ident(x):
     flr = q1-1.5*inter_quart_r
     cel = q3 + 1.5*inter_quart_r
     outlier_indices = list(x.index[(x<flr) | (x>cel)])
-    outlier_val = list(x[outlier_indices])
+    return outlier_indices
     
-    return outlier_indices, outlier_val
-    
+def processOutliers(data, dataset):
+    indices= outlier_ident(data)
+        
+    for item in indices:
+       dataset.drop(item)
+        
+ 
 
-
+    return dataset
 
 def getTrainingData():
    dataset = read_csv("bank.csv")
    dataset = dataset.drop(["contact", "poutcome", "month"], axis=1)
     
    dataset = changeData(dataset)
-    
+   
+   dataset = processOutliers(dataset["age"], dataset)
+   dataset = processOutliers(dataset["job"], dataset)
+   dataset = processOutliers(dataset["marital"], dataset)
+   dataset = processOutliers(dataset["education"], dataset)
+   dataset = processOutliers(dataset["balance"], dataset)
+   dataset = processOutliers(dataset["duration"], dataset)
+   dataset = processOutliers(dataset["campaign"], dataset)
+   dataset = processOutliers(dataset["pdays"], dataset)
+   dataset = processOutliers(dataset["previous"], dataset)
+   
     
        
    return dataset
@@ -123,7 +127,7 @@ def changeData(dataset):
     dataset["age"]= dataset["age"].replace("0", np.NaN)
     dataset["job"]= dataset["job"].replace("0", np.NaN)
     dataset["education"]= dataset["education"].replace("0", np.NaN)
-    dataset["pdays"]=dataset["pdays"].replace("-1", np.NaN)
+    dataset["pdays"]=dataset["pdays"].replace(-1, np.NaN)
     dataset = dataset.replace(" ", np.nan)
     dataset.dropna(inplace=True)
     return dataset
