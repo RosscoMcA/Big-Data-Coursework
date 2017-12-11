@@ -31,11 +31,11 @@ def processOutliers(data, dataset):
 
 def getTrainingData():
    dataset = read_csv("bank.csv")
-   dataset = dataset.drop(["contact", "poutcome", "month", "day", "default",
-                           "housing","loan" ], axis=1)
+   
+   dataset = dataset.drop(["contact", "poutcome", "month", "day"], axis=1)
     
    dataset = changeData(dataset)
-   
+
    dataset = processOutliers(dataset["age"], dataset)
    dataset = processOutliers(dataset["job"], dataset)
    dataset = processOutliers(dataset["marital"], dataset)
@@ -89,35 +89,26 @@ def changeData(dataset):
     dataset["marital"]= dataset["marital"].replace("married",2)
     dataset["marital"]= dataset["marital"].replace("divorced",3)
      
-    '''
-     Numerical categorisation of education levels 
-     0 is unknown, 1 is secondary, 2 is primary, and 3 is teriary
-     '''
+    
     dataset["education"]=dataset["education"].replace("unknown", 0)
     dataset["education"]=dataset["education"].replace("secondary", 1)
     dataset["education"]=dataset["education"].replace("primary", 2)
     dataset["education"]=dataset["education"].replace("tertiary", 3)
      
     
-    '''
-    
-     Numerical categorisation of binary results in regards to having credit in default 
-     (yes is 1, no is 0)
+  
      
     dataset["default"]=dataset["default"].replace("yes", 1)
     dataset["default"]=dataset["default"].replace("no", 0)
      
-   
-     Numerical categorisation of binary results in regards to having a personal loan
-     yes is 1 and no is 0
-     
+    
     dataset["housing"]= dataset["housing"].replace("yes", 1)
     dataset["housing"]=dataset["housing"].replace("no", 0)
      
     dataset["loan"]=dataset["loan"].replace("yes", 1)
     dataset["loan"]=dataset["loan"].replace("no", 0)
      
-    '''
+    
      
     
     '''
@@ -129,7 +120,7 @@ def changeData(dataset):
      
     dataset["age"]= dataset["age"].replace("0", np.NaN)
     dataset["job"]= dataset["job"].replace("0", np.NaN)
-    dataset["education"]= dataset["education"].replace("0", np.NaN)
+    dataset["education"]= dataset["education"].replace(0, np.NaN)
     dataset["pdays"]=dataset["pdays"].replace(-1, np.NaN)
     dataset = dataset.replace(" ", np.nan)
     dataset.dropna(inplace=True)

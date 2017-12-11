@@ -20,14 +20,32 @@ from sklearn.cross_validation import train_test_split
 data = DataConditioning.getTrainingData()
 x= data.drop('subscribed', 1)
 y= data.subscribed
-X_Train, X_Test, Y_Train, Y_Test = train_test_split(x, y, train_size=70, random_state=1)
+X_Train, X_Test, Y_Train, Y_Test = train_test_split(x, y, train_size=360, random_state=1)
 
 
 
-
-
-
+def create_model():
     
+    svm_x = np.array([X_Train["education"],  X_Train["default"]])
+    print("Creating the model")
+    classifier = svm.SVC(C=1.0, kernel="rbf")
+    
+    classifier.fit(svm_x.T, Y_Train)
+    print("Model is built")
+    
+    test_Model(classifier)
+    
+    
+
+def test_Model(prediction_model):
+    test_items = np.array([X_Test["education"], X_Test["default"]])
+    predict_results = [int(a) for a in prediction_model.predict(test_items.T)]
+    correct_total = sum(int(a==y) for a, y in zip(predict_results, Y_Test))
+    
+    print("Results of prediction are: ")
+    print("%s of %s values correct." % (correct_total, len(Y_Test)))
+
+create_model()
 
 '''
 Normalises data within the columns 
@@ -39,7 +57,7 @@ def dimensionality_reduction():
     
     print(X_PCA.head(5))
 
-dimensionality_reduction()
+#dimensionality_reduction()
 
 
 def feature_selec():
@@ -55,31 +73,15 @@ def feature_selec():
 
 
 final_train_case_x, final_test_case_x = feature_selec()
-print(final_train_case_x)
+#print(final_train_case_x)
 
-def train(): 
+
+    
+    
     
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-def visualise_items():
-    '''
+#def visualise_items():
+'''
     The system can only process one chart at a time, thus each of these operations
     were conducted one at a time
     
@@ -101,45 +103,21 @@ def visualise_items():
       data["previous"].value_counts().plot(kind="bar")
       data["poutcome"].value_counts().plot(kind="bar")
       data["subscribed"].value_counts().plot(kind="bar")
-    '''
-
-    
-    
-    '''
-def scatter_items():
-            
-   
-   numcol = 15
-   j=0
-   while j < 15:
-     i=0
-     while i < numcol: 
-         print("cols:" + str(j) +" and "+ str(i))
-         if j!=i and (i!=14 or j!=14):
-    
-             xpoints= data[[i]]
-             ypoints = data[[j]]
-             
-             cPoints = data[[14]]
-    
-             plt.scatter(xpoints, ypoints, c=cPoints)
-             plt.show()
-         i=i+1
-     j=j+1        
-            
-       
-scatter_items()
-
-XPoints= numpy.array(xpoints, ypoints)
-XPoints= XPoints.T
-YPoints = dataset[[16]]
-
-
-def mean(data): 
-    return np.mean(data)
-
-def standardDev(data): 
-    return sp.std(data)
 '''
+
+    
+    
+
+def scatter_items():
+    plt.scatter(data["education"], data["default"], c=data["subscribed"])
+    plt.show()
+      
+       
+#scatter_items()
+
+
+
+
+
         
     
