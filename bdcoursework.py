@@ -12,22 +12,71 @@ import numpy as np
 import scipy as sp
 import DataConditioning
 from sklearn.decomposition import PCA
+import sklearn.feature_selection
+from sklearn.cross_validation import train_test_split
 
 
-train_data = DataConditioning.getTrainingData()
 
+data = DataConditioning.getTrainingData()
+x= data.drop('subscribed', 1)
+y= data.subscribed
+X_Train, X_Test, Y_Train, Y_Test = train_test_split(x, y, train_size=70, random_state=1)
+
+
+
+
+
+
+    
 
 '''
 Normalises data within the columns 
 '''
 def dimensionality_reduction():
 
-    pca = PCA(n_components=14)
-    X_PCA = pandas.DataFrame(pca.fit_transform(train_data))
+    pca = PCA(n_components=10)
+    X_PCA = pandas.DataFrame(pca.fit_transform(data))
     
     print(X_PCA.head(5))
 
 dimensionality_reduction()
+
+
+def feature_selec():
+    select = sklearn.feature_selection.SelectKBest(k=9)
+    select_feature = select.fit(X_Train, Y_Train)
+    indic_sel = select_feature.get_support(indices=True)
+    colnames_select = [x.columns[i] for i in indic_sel]
+    
+    x_train_sel = X_Train[colnames_select]
+    x_test_sel = X_Test[colnames_select]
+    
+    return x_train_sel, x_test_sel
+
+
+final_train_case_x, final_test_case_x = feature_selec()
+print(final_train_case_x)
+
+def train(): 
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 def visualise_items():
     '''
@@ -35,23 +84,23 @@ def visualise_items():
     were conducted one at a time
     
     
-      train_data["age"].plot.hist()
-      train_data["job"].value_counts().plot(kind="bar")
-      train_data["marital"].value_counts().plot(kind="bar")
-      train_data["education"].value_counts().plot(kind="bar")
-      train_data["default"].value_counts().plot(kind="bar")
-      train_data["balance"].diff().hist(stacked= True, bins=50)
-      train_data["housing"].value_counts().plot(kind="bar")
-      train_data["loan"].value_counts().plot(kind="bar")
-      train_data["contact"].value_counts().plot(kind="bar")
-      train_data["day"].value_counts().plot(kind="bar")
-      train_data["month"].value_counts().plot(kind="bar")
-       train_data["duration"].plot.hist(bins= 100)
-      train_data["campaign"].value_counts().plot(kind="bar")
-      train_data["pdays"].plot.hist()
-      train_data["previous"].value_counts().plot(kind="bar")
-      train_data["poutcome"].value_counts().plot(kind="bar")
-      train_data["subscribed"].value_counts().plot(kind="bar")
+      data["age"].plot.hist()
+      data["job"].value_counts().plot(kind="bar")
+      data["marital"].value_counts().plot(kind="bar")
+      data["education"].value_counts().plot(kind="bar")
+      data["default"].value_counts().plot(kind="bar")
+      data["balance"].diff().hist(stacked= True, bins=50)
+      data["housing"].value_counts().plot(kind="bar")
+      data["loan"].value_counts().plot(kind="bar")
+      data["contact"].value_counts().plot(kind="bar")
+      data["day"].value_counts().plot(kind="bar")
+      data["month"].value_counts().plot(kind="bar")
+      data["duration"].plot.hist(bins= 100)
+      data["campaign"].value_counts().plot(kind="bar")
+      data["pdays"].plot.hist()
+      data["previous"].value_counts().plot(kind="bar")
+      data["poutcome"].value_counts().plot(kind="bar")
+      data["subscribed"].value_counts().plot(kind="bar")
     '''
 
     
@@ -68,10 +117,10 @@ def scatter_items():
          print("cols:" + str(j) +" and "+ str(i))
          if j!=i and (i!=14 or j!=14):
     
-             xpoints= train_data[[i]]
-             ypoints = train_data[[j]]
+             xpoints= data[[i]]
+             ypoints = data[[j]]
              
-             cPoints = train_data[[14]]
+             cPoints = data[[14]]
     
              plt.scatter(xpoints, ypoints, c=cPoints)
              plt.show()
