@@ -20,32 +20,11 @@ from sklearn.cross_validation import train_test_split
 data = DataConditioning.getTrainingData()
 x= data.drop('subscribed', 1)
 y= data.subscribed
-X_Train, X_Test, Y_Train, Y_Test = train_test_split(x, y, train_size=360, random_state=1)
+X_Train, X_Test, Y_Train, Y_Test = train_test_split(x, y, train_size=70, random_state=3)
 
 
 
-def create_model():
-    
-    svm_x = np.array([X_Train["education"],  X_Train["default"]])
-    print("Creating the model")
-    classifier = svm.SVC(C=1.0, kernel="rbf")
-    
-    classifier.fit(svm_x.T, Y_Train)
-    print("Model is built")
-    
-    test_Model(classifier)
-    
-    
 
-def test_Model(prediction_model):
-    test_items = np.array([X_Test["education"], X_Test["default"]])
-    predict_results = [int(a) for a in prediction_model.predict(test_items.T)]
-    correct_total = sum(int(a==y) for a, y in zip(predict_results, Y_Test))
-    
-    print("Results of prediction are: ")
-    print("%s of %s values correct." % (correct_total, len(Y_Test)))
-
-create_model()
 
 '''
 Normalises data within the columns 
@@ -61,7 +40,7 @@ def dimensionality_reduction():
 
 
 def feature_selec():
-    select = sklearn.feature_selection.SelectKBest(k=9)
+    select = sklearn.feature_selection.SelectKBest(k=12)
     select_feature = select.fit(X_Train, Y_Train)
     indic_sel = select_feature.get_support(indices=True)
     colnames_select = [x.columns[i] for i in indic_sel]
@@ -76,7 +55,28 @@ final_train_case_x, final_test_case_x = feature_selec()
 #print(final_train_case_x)
 
 
+def create_model():
     
+    #svm_x = np.array([final_train_case_x["education"], final_train_case_x["default"]])
+    print("Creating the model")
+    classifier = svm.SVC(C=1, kernel="linear")
+    
+    classifier.fit(X_Train, Y_Train)
+    print("Model is built")
+    
+    test_Model(classifier)
+    
+    
+
+def test_Model(prediction_model):
+    #test_items = np.array([X_Test["education"], X_Test["default"]])
+    predict_results = [int(a) for a in prediction_model.predict(X_Test)]
+    correct_total = sum(int(a==y) for a, y in zip(predict_results, Y_Test))
+    
+    print("Results of prediction are: ")
+    print("%s of %s values correct." % (correct_total, len(Y_Test)))
+
+create_model()
     
     
 
@@ -109,9 +109,10 @@ final_train_case_x, final_test_case_x = feature_selec()
     
 
 def scatter_items():
-    plt.scatter(data["education"], data["default"], c=data["subscribed"])
+    plt.scatter(data[""], data["marital"], c=data["subscribed"])
     plt.show()
-      
+ 
+#scatter_items()     
        
 #scatter_items()
 
